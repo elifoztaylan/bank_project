@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>{% block title %}Banka{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <nav>
+    <a href="{{ url_for('index') }}">Ana Sayfa</a>
+    {% if session.user_id %}
+      <a href="{{ url_for('hesap') }}">Hesabım</a>
+      <a href="{{ url_for('logout') }}">Çıkış</a>
+    {% else %}
+      <a href="{{ url_for('register') }}">Kayıt Ol</a>
+      <a href="{{ url_for('login') }}">Giriş Yap</a>
+    {% endif %}
+  </nav>
+  <div class="container">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <ul class="flashes">
+          {% for category, msg in messages %}
+            <li class="{{ category }}">{{ msg }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+    {% block content %}{% endblock %}
+  </div>
+</body>
+</html>
