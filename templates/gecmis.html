@@ -1,0 +1,26 @@
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>İşlem Geçmişi</title>
+</head>
+<body>
+    <h2>İşlem Geçmişi - {{ kullanici.isim }}</h2>
+    <table border="1">
+        <tr>
+            <th>Tarih</th>
+            <th>İşlem Türü</th>
+            <th>Miktar</th>
+        </tr>
+        {% for hareket in hareketler %}
+        <tr>
+            <td>{{ hareket.tarih.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+            <td>{{ hareket.islem_turu }}</td>
+            <td>{{ hareket.miktar }} TL</td>
+        </tr>
+        {% endfor %}
+    </table>
+    <a href="{{ url_for('hesap') }}">Geri Dön</a>
+</body>
+</html>
