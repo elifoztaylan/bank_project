@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 from flask_sqlalchemy import SQLAlchemy
-from flask_bcrypt import Bcrypt
+from flask_bcrypt import Bcrypt 
+from datetime import datetime
 
 app = Flask(__name__)
 app.secret_key = 'gizli_anahtarınız'
@@ -11,13 +12,23 @@ db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
 
 class Kullanici(db.Model):
+    __tablename__ = 'kullanici'
     id = db.Column(db.Integer, primary_key=True)
     isim = db.Column(db.String(100), unique=True, nullable=False)
     sifre_hash = db.Column(db.String(128), nullable=False)
     bakiye = db.Column(db.Float, default=0.0)
+    hareketler = db.relationship('Hareket',backref='kullanici',lazy=True)
 
     def check_password(self, sifre):
         return bcrypt.check_password_hash(self.sifre_hash, sifre)
+
+
+class Hareket(db.Model):
+    id = db.Column(db.Integer,primary_key=True)
+    kullanici_id = db.Column(db.Integer,db.ForeignKey('kullanici.id'),nullable=False)
+    islem_turu = db.Column(db.String(10))
+    miktar = db.Column(db.Float)
+    tarih = db.Column(db.DateTime, default=datetime.utcnow)
 
 with app.app_context():
     db.create_all()
@@ -25,6 +36,7 @@ with app.app_context():
 @app.route('/')
 def index():
     return render_template('index.html')
+
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -79,6 +91,16 @@ def hesap():
             flash('İşlem hatası: geçersiz miktar veya yetersiz bakiye.', 'error')
         db.session.commit()
     return render_template('bakiye.html', kullanici=kullanici)
+@app.route('/gecmis')
+def islem_gecmisi():
+    if 'user_id' not in session:
+        flash('Lütfen giriş yapınız.', 'error')
+        return redirect(url_for('login'))
+
+    kullanici = Kullanici.query.get(session['user_id'])
+    hareketler = Hareket.query.filter_by(kullanici_id=kullanici.id).order_by(Hareket.tarih.desc()).all()
+    return render_template('gecmis.html', kullanici=kullanici, hareketler=hareketler)
+
 
 if __name__ == '__main__':
     app.run(debug=True)
