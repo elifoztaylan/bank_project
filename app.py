@@ -77,7 +77,7 @@ def logout():
 @app.route('/hesap', methods=['GET', 'POST'])
 def hesap():
     if 'user_id' not in session:
-        flash('Lütfen önce giriş yapın.', 'error')
+        flash('Please log in firstly.', 'error')
         return redirect(url_for('login'))
 
     kullanici = Kullanici.query.get(session['user_id'])
