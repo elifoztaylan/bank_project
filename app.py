@@ -42,8 +42,8 @@ def index():
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
-        isim = request.form['isim']
-        sifre = request.form['sifre']
+        isim = request.form.get('isim')
+        sifre = request.form.get('sifre')
         if Kullanici.query.filter_by(isim=isim).first():
             flash('Bu kullanıcı adı zaten alınmış.', 'error')
         else:
