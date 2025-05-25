@@ -17,15 +17,14 @@ class Kullanici(db.Model):
     isim = db.Column(db.String(100), unique=True, nullable=False)
     sifre_hash = db.Column(db.String(128), nullable=False)
     bakiye = db.Column(db.Float, default=0.0)
-    hareketler = db.relationship('Hareket',backref='kullanici',lazy=True)
+    hareketler = db.relationship('Hareket', backref='kullanici', lazy=True)
 
     def check_password(self, sifre):
         return bcrypt.check_password_hash(self.sifre_hash, sifre)
 
-
 class Hareket(db.Model):
-    id = db.Column(db.Integer,primary_key=True)
-    kullanici_id = db.Column(db.Integer,db.ForeignKey('kullanici.id'),nullable=False)
+    id = db.Column(db.Integer, primary_key=True)
+    kullanici_id = db.Column(db.Integer, db.ForeignKey('kullanici.id'), nullable=False)
     islem_turu = db.Column(db.String(10))
     miktar = db.Column(db.Float)
     tarih = db.Column(db.DateTime, default=datetime.utcnow)
@@ -37,7 +36,6 @@ with app.app_context():
 def index():
     return render_template('index.html')
 
-
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
@@ -48,7 +46,8 @@ def register():
         else:
             hashli = bcrypt.generate_password_hash(sifre).decode('utf-8')
             yeni = Kullanici(isim=isim, sifre_hash=hashli)
-            db.session.add(yeni); db.session.commit()
+            db.session.add(yeni)
+            db.session.commit()
             flash('Kayıt başarılı, lütfen giriş yapın.', 'success')
             return redirect(url_for('login'))
     return render_template('register.html')
@@ -72,7 +71,6 @@ def logout():
     session.pop('user_id', None)
     flash('Başarıyla çıkış yapıldı.', 'info')
     return redirect(url_for('index'))
-
 
 @app.route('/hesap', methods=['GET', 'POST'])
 def hesap():
@@ -107,6 +105,16 @@ def hesap():
     hareketler = Hareket.query.filter_by(kullanici_id=kullanici.id).order_by(Hareket.tarih.desc()).all()
     return render_template('bakiye.html', kullanici=kullanici, hareketler=hareketler)
 
+
+@app.route('/islem_gecmisi')
+def islem_gecmisi():
+    if 'user_id' not in session:
+        flash('Lütfen önce giriş yapın.', 'error')
+        return redirect(url_for('login'))
+
+    kullanici = Kullanici.query.get(session['user_id'])
+    hareketler = Hareket.query.filter_by(kullanici_id=kullanici.id).order_by(Hareket.tarih.desc()).all()
+    return render_template('gecmis.html', kullanici=kullanici, hareketler=hareketler)
+
 if __name__ == '__main__':
     app.run(debug=True)
-
