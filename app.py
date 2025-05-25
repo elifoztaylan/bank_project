@@ -45,12 +45,12 @@ def register():
         isim = request.form.get('isim')
         sifre = request.form.get('sifre')
         if Kullanici.query.filter_by(isim=isim).first():
-            flash('Bu kullanıcı adı zaten alınmış.', 'error')
+            flash('This username is already taken.', 'error')
         else:
             hashli = bcrypt.generate_password_hash(sifre).decode('utf-8')
             yeni = Kullanici(isim=isim, sifre_hash=hashli)
             db.session.add(yeni); db.session.commit()
-            flash('Kayıt başarılı, lütfen giriş yapın.', 'success')
+            flash('Registration successful, please log in.', 'success')
             return redirect(url_for('login'))
     return render_template('register.html')
 
@@ -62,16 +62,16 @@ def login():
         user = Kullanici.query.filter_by(isim=isim).first()
         if user and user.check_password(sifre):
             session['user_id'] = user.id
-            flash('Giriş başarılı!', 'success')
+            flash('Login successful!', 'success')
             return redirect(url_for('hesap'))
         else:
-            flash('Kullanıcı adı veya şifre hatalı.', 'error')
+            flash('Incorrect name or password.', 'error')
     return render_template('login.html')
 
 @app.route('/logout')
 def logout():
     session.pop('user_id', None)
-    flash('Başarıyla çıkış yapıldı.', 'info')
+    flash('Succesfully logged out.', 'info')
     return redirect(url_for('index'))
 
 @app.route('/hesap', methods=['GET', 'POST'])
@@ -85,7 +85,7 @@ def hesap():
         islem = request.form['islem']
         miktar = float(request.form['miktar'])
 
-        if islem == 'yatir' and miktar > 0:Home Page Join Now Log In
+        if islem == 'yatir' and miktar > 0:
         
             kullanici.bakiye += miktar
             yeni_hareket = Hareket(kullanici_id=kullanici.id, islem_turu="Yatırma", miktar=miktar)
