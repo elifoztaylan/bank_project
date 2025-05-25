@@ -1,9 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 from flask_sqlalchemy import SQLAlchemy
-from flask_bcrypt import Bcrypt
+from flask_bcrypt import Bcrypt 
 from datetime import datetime
-
-
 
 app = Flask(__name__)
 app.secret_key = 'gizli_anahtarınız'
@@ -21,10 +19,10 @@ class Kullanici(db.Model):
     bakiye = db.Column(db.Float, default=0.0)
     hareketler = db.relationship('Hareket',backref='kullanici',lazy=True)
 
-
     def check_password(self, sifre):
         return bcrypt.check_password_hash(self.sifre_hash, sifre)
-    
+
+
 class Hareket(db.Model):
     id = db.Column(db.Integer,primary_key=True)
     kullanici_id = db.Column(db.Integer,db.ForeignKey('kullanici.id'),nullable=False)
@@ -39,18 +37,19 @@ with app.app_context():
 def index():
     return render_template('index.html')
 
+
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
-        isim = request.form.get('isim')
-        sifre = request.form.get('sifre')
+        isim = request.form['isim']
+        sifre = request.form['sifre']
         if Kullanici.query.filter_by(isim=isim).first():
-            flash('This username is already taken.', 'error')
+            flash('Bu kullanıcı adı zaten alınmış.', 'error')
         else:
             hashli = bcrypt.generate_password_hash(sifre).decode('utf-8')
             yeni = Kullanici(isim=isim, sifre_hash=hashli)
             db.session.add(yeni); db.session.commit()
-            flash('Registration successful, please log in.', 'success')
+            flash('Kayıt başarılı, lütfen giriş yapın.', 'success')
             return redirect(url_for('login'))
     return render_template('register.html')
 
@@ -62,58 +61,52 @@ def login():
         user = Kullanici.query.filter_by(isim=isim).first()
         if user and user.check_password(sifre):
             session['user_id'] = user.id
-            flash('Login successful!', 'success')
+            flash('Giriş başarılı!', 'success')
             return redirect(url_for('hesap'))
         else:
-            flash('Incorrect name or password.', 'error')
+            flash('Kullanıcı adı veya şifre hatalı.', 'error')
     return render_template('login.html')
 
 @app.route('/logout')
 def logout():
     session.pop('user_id', None)
-    flash('Succesfully logged out.', 'info')
+    flash('Başarıyla çıkış yapıldı.', 'info')
     return redirect(url_for('index'))
+
 
 @app.route('/hesap', methods=['GET', 'POST'])
 def hesap():
     if 'user_id' not in session:
-        flash('Please log in firstly.', 'error')
+        flash('Lütfen önce giriş yapın.', 'error')
         return redirect(url_for('login'))
 
     kullanici = Kullanici.query.get(session['user_id'])
+
     if request.method == 'POST':
         islem = request.form['islem']
         miktar = float(request.form['miktar'])
 
         if islem == 'yatir' and miktar > 0:
-        
             kullanici.bakiye += miktar
-            yeni_hareket = Hareket(kullanici_id=kullanici.id, islem_turu="Yatırma", miktar=miktar)
-            db.session.add(yeni_hareket)
-            flash(f'{miktar} TL deposited.', 'success')
+            hareket = Hareket(kullanici_id=kullanici.id, islem_turu='Yatırma', miktar=miktar)
+            db.session.add(hareket)
 
         elif islem == 'cek' and 0 < miktar <= kullanici.bakiye:
             kullanici.bakiye -= miktar
-            yeni_hareket = Hareket(kullanici_id=kullanici.id, islem_turu = "Çekme", miktar=miktar)
-            db.session.add(yeni_hareket)
-            flash(f'{miktar} TL withdrawn.','info')
+            hareket = Hareket(kullanici_id=kullanici.id, islem_turu='Çekme', miktar=miktar)
+            db.session.add(hareket)
 
         else:
-            flash('Transaction Error: Invalid amount or insufficient balance.', 'error')
+            flash('İşlem hatası: geçersiz miktar veya yetersiz bakiye.', 'error')
+            return redirect(url_for('hesap'))
+
         db.session.commit()
-    return render_template('bakiye.html', kullanici=kullanici)
+        flash('İşlem başarılı.', 'success')
+        return redirect(url_for('hesap'))
 
-@app.route('/gecmis')
-def islem_gecmisi():
-    if 'user_id' not in session:
-        flash('Please log in.', 'error')
-        return redirect(url_for('login'))
-
-    kullanici = Kullanici.query.get(session['user_id'])
     hareketler = Hareket.query.filter_by(kullanici_id=kullanici.id).order_by(Hareket.tarih.desc()).all()
-    return render_template('gecmis.html', kullanici=kullanici, hareketler=hareketler)
-
+    return render_template('bakiye.html', kullanici=kullanici, hareketler=hareketler)
 
 if __name__ == '__main__':
     app.run(debug=True)
-    
+
