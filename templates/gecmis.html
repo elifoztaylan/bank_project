@@ -1,16 +1,14 @@
-
-
 {% extends 'base.html' %}
 
 {% block title %}Transaction History{% endblock %}
 
 {% block content %}
-  <h2>Transaction History - {{ kullanici.isim }}</h2>
+  <h2>İşlem Geçmişi - {{ kullanici.isim }}</h2>
   <table border="1">
       <tr>
-          <th>Date</th>
-          <th>Transaction Type</th>
-          <th>Amount</th>
+          <th>Tarih</th>
+          <th>İşlem Türü</th>
+          <th>Miktar</th>
       </tr>
       {% for hareket in hareketler %}
       <tr>
@@ -20,6 +18,5 @@
       </tr>
       {% endfor %}
   </table>
-  <a href="{{ url_for('hesap') }}">Come Back</a>
-{% endblock %}
-
+  <a href="{{ url_for('hesap') }}">Geri Dön</a>
+{% endblock %} 

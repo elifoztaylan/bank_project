@@ -88,13 +88,13 @@ def hesap():
         if islem == 'yatir' and miktar > 0:
         
             kullanici.bakiye += miktar
-            yeni_hareket = Hareket(kullanici_id=kullanici.id, islem_turu="Deposit", miktar=miktar)
+            yeni_hareket = Hareket(kullanici_id=kullanici.id, islem_turu="Yatırma", miktar=miktar)
             db.session.add(yeni_hareket)
             flash(f'{miktar} TL deposited.', 'success')
 
         elif islem == 'cek' and 0 < miktar <= kullanici.bakiye:
             kullanici.bakiye -= miktar
-            yeni_hareket = Hareket(kullanici_id=kullanici.id, islem_turu = "Withdrawl", miktar=miktar)
+            yeni_hareket = Hareket(kullanici_id=kullanici.id, islem_turu = "Çekme", miktar=miktar)
             db.session.add(yeni_hareket)
             flash(f'{miktar} TL withdrawn.','info')
 
@@ -115,6 +115,5 @@ def islem_gecmisi():
 
 
 if __name__ == '__main__':
-    app.run(debug=True) 
+    app.run(debug=True)
     
-

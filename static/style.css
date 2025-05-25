@@ -1,9 +1,15 @@
-body { font-family: Arial, sans-serif; background: #ccccda; margin:0; }
+{ font-family: Arial, sans-serif; background: #ccccda; margin:0; }
 nav { background: #2c3e50; padding: 10px; text-align: center; }
 nav a { color: white; margin: 0 15px; text-decoration: none; }
 .container { width: 400px; margin: 40px auto; background: #fff; padding: 20px; border-radius: 10px;
              box-shadow: 0 0 10px rgba(0,0,0,0.1); }
 h1, h2 { text-align: center; color: #2c3e50; }
+body { font-family: Arial, sans-serif; background: #e8b4cb; margin:0; }
+nav { background: #922146; padding: 10px; text-align: center; }
+nav a { color: #460d1e; margin: 0 15px; text-decoration: none; }
+.container { width: 400px; margin: 40px auto; background: #6d0e2c84; padding: 20px; border-radius: 10px;
+             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); }
+h1, h2 { text-align: center; color: #000000; }
 input, select, button { width: 100%; padding: 10px; margin: 10px 0; }
 .flashes { list-style: none; padding: 0; }
 .flashes li { padding: 8px; border-radius: 5px; margin-bottom: 10px; }
