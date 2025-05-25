@@ -1,7 +1,9 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 from flask_sqlalchemy import SQLAlchemy
-from flask_bcrypt import Bcrypt 
+from flask_bcrypt import Bcrypt
 from datetime import datetime
+
+
 
 app = Flask(__name__)
 app.secret_key = 'gizli_anahtarınız'
@@ -19,10 +21,10 @@ class Kullanici(db.Model):
     bakiye = db.Column(db.Float, default=0.0)
     hareketler = db.relationship('Hareket',backref='kullanici',lazy=True)
 
+
     def check_password(self, sifre):
         return bcrypt.check_password_hash(self.sifre_hash, sifre)
-
-
+    
 class Hareket(db.Model):
     id = db.Column(db.Integer,primary_key=True)
     kullanici_id = db.Column(db.Integer,db.ForeignKey('kullanici.id'),nullable=False)
@@ -36,7 +38,6 @@ with app.app_context():
 @app.route('/')
 def index():
     return render_template('index.html')
-
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -93,19 +94,33 @@ def hesap():
 
         elif islem == 'cek' and 0 < miktar <= kullanici.bakiye:
             kullanici.bakiye -= miktar
+<<<<<<< HEAD
             hareket = Hareket(kullanici_id=kullanici.id, islem_turu='Çekme', miktar=miktar)
             db.session.add(hareket)
+=======
+>>>>>>> bbc12102f321fbe109ba1b76e87f4853c8c15e81
 
         else:
             flash('İşlem hatası: geçersiz miktar veya yetersiz bakiye.', 'error')
             return redirect(url_for('hesap'))
 
         db.session.commit()
+<<<<<<< HEAD
         flash('İşlem başarılı.', 'success')
         return redirect(url_for('hesap'))
+=======
+    return render_template('bakiye.html', kullanici=kullanici)
+
+@app.route('/gecmis')
+def islem_gecmisi():
+    if 'user_id' not in session:
+        flash('Lütfen giriş yapınız.', 'error')
+        return redirect(url_for('login'))
+>>>>>>> bbc12102f321fbe109ba1b76e87f4853c8c15e81
 
     hareketler = Hareket.query.filter_by(kullanici_id=kullanici.id).order_by(Hareket.tarih.desc()).all()
     return render_template('bakiye.html', kullanici=kullanici, hareketler=hareketler)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True) 
+
