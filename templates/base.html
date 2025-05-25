@@ -2,13 +2,13 @@
 <html lang="tr">
 <head>
   <meta charset="UTF-8">
-  <title>{% block title %}Banka{% endblock %}</title>
+  <title>{% block title %}Bank{% endblock %}</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
   <nav>
     <a href="{{ url_for('index') }}">Home Page</a>
-    {% if session.user_id %}
+    {% if session.get('user_id') %}
       <a href="{{ url_for('hesap') }}">My Account</a>
       <a href="{{ url_for('logout') }}">Log Out</a>
     {% else %}
