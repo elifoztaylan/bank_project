@@ -5,7 +5,7 @@
 {% block title %}Transaction History{% endblock %}
 
 {% block content %}
-  <h2>İşlem Geçmişi - {{ kullanici.isim }}</h2>
+  <h2>Transaction History - {{ kullanici.isim }}</h2>
   <table border="1">
       <tr>
           <th>Date</th>
@@ -22,3 +22,4 @@
   </table>
   <a href="{{ url_for('hesap') }}">Come Back</a>
 {% endblock %}
+
