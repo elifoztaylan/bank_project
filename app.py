@@ -84,20 +84,28 @@ def hesap():
     if request.method == 'POST':
         islem = request.form['islem']
         miktar = float(request.form['miktar'])
+
         if islem == 'yatir' and miktar > 0:
             kullanici.bakiye += miktar
+            yeni_hareket = Hareket(kullanici_id=kullanici.id, islem_turu="Yatırma", miktar=miktar)
+            db.session.add(yeni_hareket)
+            flash(f'{miktar} TL deposited.', 'success')
+
         elif islem == 'cek' and 0 < miktar <= kullanici.bakiye:
             kullanici.bakiye -= miktar
+            yeni_hareket = Hareket(kullanici_id=kullanici.id, islem_turu = "Çekme", miktar=miktar)
+            db.session.add(yeni_hareket)
+            flash(f'{miktar} TL withdrawn.','info')
 
         else:
-            flash('İşlem hatası: geçersiz miktar veya yetersiz bakiye.', 'error')
+            flash('Transaction Error: Invalid amount or insufficient balance.', 'error')
         db.session.commit()
     return render_template('bakiye.html', kullanici=kullanici)
 
 @app.route('/gecmis')
 def islem_gecmisi():
     if 'user_id' not in session:
-        flash('Lütfen giriş yapınız.', 'error')
+        flash('Please log in.', 'error')
         return redirect(url_for('login'))
 
     kullanici = Kullanici.query.get(session['user_id'])
