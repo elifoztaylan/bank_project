@@ -1,14 +1,14 @@
 {% extends 'base.html' %}
-{% block title %}Hesabım{% endblock %}
+{% block title %}My Account{% endblock %}
 {% block content %}
-  <h2>Merhaba, {{ kullanici.isim }}</h2>
-  <p>Güncel Bakiyeniz: <strong>{{ kullanici.bakiye }} TL</strong></p>
+  <h2>Hello, {{ kullanici.isim }}</h2>
+  <p>Your Current Balance: <strong>{{ kullanici.bakiye }} TL</strong></p>
   <form method="POST">
     <input type="number" name="miktar" step="0.01" placeholder="Miktar" required>
     <select name="islem">
-      <option value="yatir">Para Yatır</option>
-      <option value="cek">Para Çek</option>
+      <option value="yatir">Deposit</option>
+      <option value="cek">Withdraw</option>
     </select>
-    <button type="submit">İşlem Yap</button>
+    <button type="Execute Transaction">İşlem Yap</button>
   </form>
 {% endblock %}
