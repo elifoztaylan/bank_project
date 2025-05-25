@@ -7,6 +7,6 @@ h1, h2 { text-align: center; color: #2c3e50; }
 input, select, button { width: 100%; padding: 10px; margin: 10px 0; }
 .flashes { list-style: none; padding: 0; }
 .flashes li { padding: 8px; border-radius: 5px; margin-bottom: 10px; }
-.flashes .success { background: #d4edda; color: #ef0a0a; }
-.flashes .error   { background: #f8d7da; color: #f90000; }
-.flashes .info    { background: #cce5ff; color: #850000; }
+.flashes .success { background: #edd4ea; color: #ef0a0a; }
+.flashes .error   { background: #f8f2d7; color: #f90000; }
+.flashes .info    { background: #f9ccff; color: #850000; }
