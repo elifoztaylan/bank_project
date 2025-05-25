@@ -8,9 +8,9 @@
   <h2>İşlem Geçmişi - {{ kullanici.isim }}</h2>
   <table border="1">
       <tr>
-          <th>Tarih</th>
-          <th>İşlem Türü</th>
-          <th>Miktar</th>
+          <th>Date</th>
+          <th>Transaction Type</th>
+          <th>Amount</th>
       </tr>
       {% for hareket in hareketler %}
       <tr>
@@ -20,5 +20,5 @@
       </tr>
       {% endfor %}
   </table>
-  <a href="{{ url_for('hesap') }}">Geri Dön</a>
+  <a href="{{ url_for('hesap') }}">Come Back</a>
 {% endblock %}
