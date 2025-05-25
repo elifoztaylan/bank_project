@@ -73,6 +73,7 @@ def logout():
     flash('Başarıyla çıkış yapıldı.', 'info')
     return redirect(url_for('index'))
 
+
 @app.route('/hesap', methods=['GET', 'POST'])
 def hesap():
     if 'user_id' not in session:
@@ -80,27 +81,31 @@ def hesap():
         return redirect(url_for('login'))
 
     kullanici = Kullanici.query.get(session['user_id'])
+
     if request.method == 'POST':
         islem = request.form['islem']
         miktar = float(request.form['miktar'])
+
         if islem == 'yatir' and miktar > 0:
             kullanici.bakiye += miktar
+            hareket = Hareket(kullanici_id=kullanici.id, islem_turu='Yatırma', miktar=miktar)
+            db.session.add(hareket)
+
         elif islem == 'cek' and 0 < miktar <= kullanici.bakiye:
             kullanici.bakiye -= miktar
+            hareket = Hareket(kullanici_id=kullanici.id, islem_turu='Çekme', miktar=miktar)
+            db.session.add(hareket)
+
         else:
             flash('İşlem hatası: geçersiz miktar veya yetersiz bakiye.', 'error')
+            return redirect(url_for('hesap'))
+
         db.session.commit()
-    return render_template('bakiye.html', kullanici=kullanici)
-@app.route('/gecmis')
-def islem_gecmisi():
-    if 'user_id' not in session:
-        flash('Lütfen giriş yapınız.', 'error')
-        return redirect(url_for('login'))
+        flash('İşlem başarılı.', 'success')
+        return redirect(url_for('hesap'))
 
-    kullanici = Kullanici.query.get(session['user_id'])
     hareketler = Hareket.query.filter_by(kullanici_id=kullanici.id).order_by(Hareket.tarih.desc()).all()
-    return render_template('gecmis.html', kullanici=kullanici, hareketler=hareketler)
-
+    return render_template('bakiye.html', kullanici=kullanici, hareketler=hareketler)
 
 if __name__ == '__main__':
     app.run(debug=True)
