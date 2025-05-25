@@ -85,7 +85,8 @@ def hesap():
         islem = request.form['islem']
         miktar = float(request.form['miktar'])
 
-        if islem == 'yatir' and miktar > 0:
+        if islem == 'yatir' and miktar > 0:Home Page Join Now Log In
+        
             kullanici.bakiye += miktar
             yeni_hareket = Hareket(kullanici_id=kullanici.id, islem_turu="Yatırma", miktar=miktar)
             db.session.add(yeni_hareket)
