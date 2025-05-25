@@ -4,11 +4,11 @@
   <h2>Hello, {{ kullanici.isim }}</h2>
   <p>Your Current Balance: <strong>{{ kullanici.bakiye }} TL</strong></p>
   <form method="POST">
-    <input type="number" name="miktar" step="0.01" placeholder="Miktar" required>
+    <input type="number" name="miktar" step="0.01" placeholder="Amount" required>
     <select name="islem">
       <option value="yatir">Deposit</option>
       <option value="cek">Withdraw</option>
     </select>
-    <button type="Execute Transaction">İşlem Yap</button>
+    <button type="islem yap">Execute Transaction</button>
   </form>
 {% endblock %}
